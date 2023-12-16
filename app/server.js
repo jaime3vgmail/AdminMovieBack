@@ -1,14 +1,14 @@
-var express = require('express') //llamamos a Express
-// para establecer las distintas rutas, necesitamos instanciar el express router
-
-var app = express()           
-   
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 
 var port = process.env.PORT || 8080  // establecemos nuestro puerto
 
 app.get('/', function(req, res) {
   res.json({ mensaje: '¡Hola Mundo!' })   
-})
+});
 
 
 //Conectando al backend para obtener las peliculas
@@ -39,8 +39,38 @@ app.get('/api/movies', function(req, res) {
     }
 })
 
-app.post('/', function(req, res) {
-  res.json({ mensaje: 'Método post' })   
+app.get('/healthcheck', function(req, res) {
+  try
+  {
+    res.json({ mensaje: 'OK' });
+  }
+  catch(error)
+  {
+      res.json({ error: error.message,stack:error.stack });   
+  }
+})
+
+app.post('/validateUser', function(req, res) {
+  try
+  {
+    console.log('Got body:', req.body);
+    // console.log('Got body:', req);
+      if (req.body== null || req.body.username==null)
+      {
+        res.status(500).json({ error: 'Username Requerido' });    
+      }
+      if (req.body== null || req.body.password==null)
+      {
+        res.status(500).json({ error: 'Password Requerido' });    
+      }
+      res.json({ mensaje: 'Cliente Valido' });
+    
+    
+  }
+  catch(error)
+  {
+      res.json({ error: error.message,stack:error.stack });   
+  }
 })
 
 // app.del('/', function(req, res) {
